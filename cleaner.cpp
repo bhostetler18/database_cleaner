@@ -120,7 +120,6 @@ int main(int argc, char** argv) {
     cout << "Reset attempt counters? (Y/n) ";
     cin >> response;
     if (response == "Y") { resetCounters = true; }
-    else { return 0; }
     queueFailedJobs(database, resetCounters, oldestAllowableTime);
     cout << "Complete!" << endl;
 
