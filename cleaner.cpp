@@ -20,6 +20,7 @@ int getNumFailedJobs(Db db, unsigned long cutoffTime)
     }
 }
 
+//TODO: also set startTime?
 void queueFailedJobs(Db db, bool resetAttemptCounter, unsigned long cutoffTime)
 {
     string sqlSetStatus = "update job set status = 'Q' where startTime < " + to_string(cutoffTime) + 
