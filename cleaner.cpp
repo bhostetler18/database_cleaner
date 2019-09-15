@@ -3,6 +3,7 @@
 #include <utility>
 #include <vector>
 #include <string>
+#include <fstream>
 #include "cleaner.h"
 #include "asciiGrapher.h"
 
@@ -45,6 +46,14 @@ void queueFailedJobs(Db db, bool resetAttemptCounter, unsigned long cutoffTime)
 }
 
 int main(int argc, char** argv) {
+
+    // Check if database file exists
+    std::ifstream infile("tmp.sqlite");
+    if (!infile.good()) {
+        cout << "Error: could not access database file." << endl;
+        return 0;
+    }
+
     Db database("tmp.sqlite"); //TODO: argument for selecting database?
 
     // Defaults
