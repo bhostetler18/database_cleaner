@@ -2,6 +2,7 @@
 #include <ctime>
 #include <utility>
 #include <vector>
+#include <string>
 #include "cleaner.h"
 #include "asciiGrapher.h"
 
