@@ -1,5 +1,5 @@
 cleaner:
 	g++ -c -Wall -std=c++11 *.cpp
-	g++ -o cleaner.out *.o sqdb/sqdb.o sqdb/sqlite3.o
+	g++ -o cleaner *.o sqdb/sqdb.o sqdb/sqlite3.o #call make in sqdb?
 clean:
-	rm cleaner.out
+	rm cleaner
