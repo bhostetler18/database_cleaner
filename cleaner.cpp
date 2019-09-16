@@ -46,7 +46,6 @@ void queueFailedJobs(Db db, bool resetAttemptCounter, unsigned long cutoffTime)
 }
 
 int main(int argc, char** argv) {
-
     // Check if database file exists
     std::ifstream infile("tmp.sqlite");
     if (!infile.good()) {
