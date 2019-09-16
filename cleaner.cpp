@@ -117,8 +117,8 @@ int main(int argc, char** argv) {
             }
             Grapher grapher;
             grapher.setData(dataPoints);
-            cout << endl << "Job age plot:" << endl;
-            grapher.displayBarGraph("Age (hours)", "Number of jobs", 20);
+            cout << endl << "Number of jobs by age (hours):" << endl;
+            grapher.displayBarGraph("Age (hours)", "Number of jobs", 30);
         } catch (sqdb::Exception& e) {
             cout << "DATABASE ERROR" << endl;
         }
