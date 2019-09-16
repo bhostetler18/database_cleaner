@@ -112,7 +112,8 @@ int main(int argc, char** argv) {
             Statement s = database.Query(query);
             while (s.Next()) {
                 unsigned long startTime = s.GetField(0);
-                dataPoints.push_back(startTime);
+                unsigned long age = currentTime - startTime;
+                dataPoints.push_back(age);
             }
             Grapher grapher;
             grapher.setData(dataPoints);

@@ -15,8 +15,9 @@ void Grapher::displayBarGraph(string xAxisLabel, string yAxisLabel, unsigned int
 	unsigned long min = *min_element(data.begin(), data.end());
 	unsigned long max = *max_element(data.begin(), data.end());
 	unsigned long range = max - min;
-	unsigned long binWidth = range / bins; //TODO: better division of bins
+	unsigned long binWidth = range / bins; //TODO: better division of bins?
 	vector<int> counts;
+	vector<pair<unsigned long, unsigned long>> ranges;
 	for (int i = 0; i < bins; i++) {
 		unsigned long binMin = min + i * binWidth;
 		unsigned long binMax = min + (i + 1) * binWidth;
@@ -26,6 +27,7 @@ void Grapher::displayBarGraph(string xAxisLabel, string yAxisLabel, unsigned int
 		};
 		int count = count_if(data.begin(), data.end(), isInRange);
 		counts.push_back(count);
+		ranges.push_back(make_pair(binMin / 3600 , binMax / 3600));
 	}
 	// Calculate bar heights
 	int barWidth = terminalWidth / bins;
@@ -37,6 +39,7 @@ void Grapher::displayBarGraph(string xAxisLabel, string yAxisLabel, unsigned int
 		barHeights.push_back(normalized);
 	}
 
+	// Generate y axis labels	
 	int maxLength = 0;
 	vector<string> yAxisLabels;
 	for (int i = 0; i < graphHeight; i++) {
@@ -76,9 +79,25 @@ void Grapher::displayBarGraph(string xAxisLabel, string yAxisLabel, unsigned int
 		}
 		cout << endl;
 	}
-	cout << string(terminalWidth + maxLength + 1, '-') << " " << xAxisLabel << endl << endl;
-	unsigned long currentTime = time(nullptr);
-	cout << "Minimum job age: " << float(currentTime - max) / 3600.0 << " hours" << endl;
-	cout << "Maximum job age: " << float(currentTime - min) / 3600.0 << " hours" << endl;
+
+	cout << string(terminalWidth + maxLength + 1, '-') << " " << xAxisLabel << endl;
+	cout << string(maxLength + 1, ' ');
+	for (int i = 0; i < bins; i++) {
+		string prefixSpaces = string(barWidth / 2, ' ');
+		string postfixSpaces = "";
+		if (barWidth - (prefixSpaces.size() + 1) > 0) {
+			postfixSpaces = string(barWidth - (prefixSpaces.size() + 1), ' ');
+		} 
+		cout << prefixSpaces << i << postfixSpaces;
+	}
+	cout << endl << endl;
+	for (int i = 0; i < ranges.size(); i++) {
+		auto range = ranges[i];
+		string separator = (i == ranges.size() - 1) ? " - " : " - <";
+		cout << i << ": " << range.first << separator << range.second << " " << endl;
+	}
+	//TODO move out of grapher to make more generic
+	cout << "Minimum job age: " << float(min) / 3600.0 << " hours" << endl;
+	cout << "Maximum job age: " << float(max) / 3600.0 << " hours" << endl;
 	cout << endl;
 }
