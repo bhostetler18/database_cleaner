@@ -7,7 +7,7 @@
 #include "cleaner.h"
 #include "asciiGrapher.h"
 
-int getNumFailedJobs(Db db, unsigned long cutoffTime)
+int getNumOldJobs(Db db, unsigned long cutoffTime)
 {
     string queryString = "select count(*) from job where startTime < " + to_string(cutoffTime) + 
     " and status = 'R'" + ";";
@@ -23,7 +23,7 @@ int getNumFailedJobs(Db db, unsigned long cutoffTime)
 }
 
 //TODO: also set startTime?
-void queueFailedJobs(Db db, bool resetAttemptCounter, unsigned long cutoffTime)
+void queueOldJobs(Db db, bool resetAttemptCounter, unsigned long cutoffTime)
 {
     string sqlSetStatus = "update job set status = 'Q' where startTime < " + to_string(cutoffTime) + 
     " and status = 'R'" + ";";
@@ -65,7 +65,7 @@ int main(int argc, char** argv) {
         if (strncmp(argv[1], "--help", 4) == 0) {
             cout << "Flags:" << endl;
             cout << "-p : show a plot of job start times" << endl;
-            cout << "-t 'HOURS' : set the age in hours at which jobs are considered failed (defaults to 24)" << endl;
+            cout << "-t 'HOURS' : set the minimum age of jobs to search for (defaults to 24)" << endl;
             return 0;
         }
 
@@ -98,9 +98,9 @@ int main(int argc, char** argv) {
     unsigned long currentTime = time(nullptr); //TODO: this could potentially break on non-UNIX systems 
     unsigned long oldestAllowableTime = currentTime - cutoffTimeInSeconds;
 
-    int count = getNumFailedJobs(database, oldestAllowableTime);
+    int count = getNumOldJobs(database, oldestAllowableTime);
     if (count == 0) { 
-        cout << "No failed jobs." << endl;
+        cout << "No jobs older than " << cutoffHours << " hours." << endl;
         return 0; 
     }
     if (shouldPlot) {
@@ -121,7 +121,7 @@ int main(int argc, char** argv) {
             cout << "DATABASE ERROR" << endl;
         }
     }
-    cout << to_string(count) + " failed jobs found." << endl;
+    cout << to_string(count) + " jobs older than " << cutoffHours << " hours found." << endl;
 
     cout << "Queue these jobs? (Y/n) ";
     string response;
@@ -130,7 +130,7 @@ int main(int argc, char** argv) {
     cout << "Reset attempt counters? (Y/n) ";
     cin >> response;
     if (response == "Y") { resetCounters = true; }
-    queueFailedJobs(database, resetCounters, oldestAllowableTime);
+    queueOldJobs(database, resetCounters, oldestAllowableTime);
     cout << "Complete!" << endl;
 
 }
