@@ -10,7 +10,7 @@ void Grapher::setData(vector<unsigned long> data) {
 	this->data = data;
 }
 
-void Grapher::displayBarGraph(string xAxisLabel, string yAxisLabel, unsigned int bins) {
+void Grapher::displayBarGraph(string xAxisUnit, string yAxisUnit, unsigned int bins) {
 	unsigned long min = *min_element(data.begin(), data.end());
 	unsigned long max = *max_element(data.begin(), data.end());
 	unsigned long range = max - min;
@@ -28,6 +28,7 @@ void Grapher::displayBarGraph(string xAxisLabel, string yAxisLabel, unsigned int
 		int count = count_if(data.begin(), data.end(), isInRange);
 		counts.push_back(count);
 		string separator = (i == bins - 1) ? " - " : " - <";
+		//TODO: display decimals to avoid something like 24 - <24
 		string label = to_string(binMin / 3600) + separator + to_string(binMax / 3600) + ": ";
 		if (label.size() > maxLabelWidth) {
 			maxLabelWidth = label.size();
@@ -37,7 +38,7 @@ void Grapher::displayBarGraph(string xAxisLabel, string yAxisLabel, unsigned int
 	// Calculate bar heights
 	int maxCount = *max_element(counts.begin(), counts.end());
 	vector<int> barHeights;
-	double scalingFactor = double(this->terminalWidth)/double(maxCount);
+	float scalingFactor = float(this->terminalWidth)/float(maxCount);
 
 	for (auto count : counts) {
 		int normalized = count * scalingFactor; //TODO: rounding errors
@@ -53,7 +54,7 @@ void Grapher::displayBarGraph(string xAxisLabel, string yAxisLabel, unsigned int
 			cout << "█";
 		}
 		if (barHeights[bar] != 0) {
-			cout << " (" << counts[bar] << ")";
+			cout << " (" << counts[bar] << " " << yAxisUnit << ")";
 		}
 		cout << endl;
 	}

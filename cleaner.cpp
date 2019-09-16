@@ -118,7 +118,7 @@ int main(int argc, char** argv) {
             Grapher grapher;
             grapher.setData(dataPoints);
             cout << endl << "Number of jobs by age (hours):" << endl;
-            grapher.displayBarGraph("Age (hours)", "Number of jobs", 30);
+            grapher.displayBarGraph("hours", "jobs", 20); //TODO: flag to set bins?
         } catch (sqdb::Exception& e) {
             cout << "DATABASE ERROR" << endl;
         }
