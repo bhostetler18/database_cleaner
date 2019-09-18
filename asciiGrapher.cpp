@@ -51,7 +51,7 @@ void Grapher::displayBarGraph(string xAxisUnit, string yAxisUnit, unsigned int b
 		}
 		cout << rangeLabels[bar];
 		for (int i = 0; i < barHeights[bar]; i++) {
-			cout << "█";
+			cout << "█"; //TODO: use fractional bars for better accuracy?
 		}
 		if (barHeights[bar] != 0) {
 			cout << " (" << counts[bar] << " " << yAxisUnit << ")";
