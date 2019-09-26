@@ -3,6 +3,7 @@
 #include <utility>
 #include <vector>
 #include <string>
+#include <cstring>
 #include <fstream>
 #include "cleaner.h"
 #include "asciiGrapher.h"
