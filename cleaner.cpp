@@ -70,7 +70,7 @@ int main(int argc, char** argv) {
             return 0;
         }
 
-        for (int i = 1; i < argc; i++) { //TODO: gross, refactor
+        for (unsigned int i = 1; i < argc; i++) { //TODO: gross, refactor
             bool invalid = false;
             if (strncmp(argv[i], "-p", 4) == 0) {
                 shouldPlot = true;

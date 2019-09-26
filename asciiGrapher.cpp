@@ -18,7 +18,7 @@ void Grapher::displayBarGraph(string xAxisUnit, string yAxisUnit, unsigned int b
 	vector<int> counts;
 	vector<string> rangeLabels;
 	int maxLabelWidth = 0;
-	for (int i = 0; i < bins; i++) {
+	for (unsigned int i = 0; i < bins; i++) {
 		unsigned long binMin = min + i * binWidth;
 		unsigned long binMax = min + (i + 1) * binWidth;
 		bool inclusiveMax = (i == bins - 1);
@@ -45,7 +45,7 @@ void Grapher::displayBarGraph(string xAxisUnit, string yAxisUnit, unsigned int b
 		barHeights.push_back(normalized);
 	}
 
-	for (int bar = 0; bar < barHeights.size(); bar++) {
+	for (unsigned int bar = 0; bar < barHeights.size(); bar++) {
 		if (rangeLabels[bar].size() < maxLabelWidth) {
 			cout << string(maxLabelWidth - rangeLabels[bar].size(), ' ');
 		}
