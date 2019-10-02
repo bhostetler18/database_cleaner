@@ -113,10 +113,10 @@ int main(int argc, char** argv) {
             Statement s = database.Query(query);
             while (s.Next()) {
                 unsigned long startTime = s.GetField(0);
-                unsigned long age = currentTime - startTime;
-                dataPoints.push_back(age);
+                unsigned long age_seconds = currentTime - startTime;
+                dataPoints.push_back(age_seconds);
             }
-            Grapher grapher;
+            Grapher<unsigned long> grapher;
             grapher.setData(dataPoints);
             cout << endl << "Number of jobs by age (hours):" << endl;
             grapher.displayBarGraph("hours", "jobs", 20); //TODO: flag to set bins?
