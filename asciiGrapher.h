@@ -9,10 +9,8 @@ template<typename T>
 class Grapher {
 public:
 	Grapher(int width = 60);
-	void displayBarGraph(string xUnit, string yUnit, unsigned int bins = 10, 
-		unsigned int* lowerBound = nullptr, 
-		unsigned int* upperBound = nullptr) const;
-	void setData(vector<T>); //TODO: template to take any numeric type
+	void displayBarGraph(string xUnit, string yUnit, unsigned int bins = 10, T lowerBound = 0, T upperBound = 0) const;
+	void setData(vector<T>);
 
 private:
 	int terminalWidth; //TODO: this is used as max bar width, and graph could extend beyond due to labels
@@ -30,15 +28,18 @@ void Grapher<T>::setData(vector<T> data) {
 }
 
 template<typename T>
-void Grapher<T>::displayBarGraph(string xUnit, string yUnit, unsigned int bins, unsigned int* lowerBound, unsigned int* upperBound) const {
+void Grapher<T>::displayBarGraph(string xUnit, string yUnit, unsigned int bins, T lowerBound, T upperBound) const {
 	T min = *min_element(data.begin(), data.end());
 	T max = *max_element(data.begin(), data.end());
 
-	if (lowerBound != nullptr && upperBound != nullptr && 
-		(T)*lowerBound >= min && (T)*upperBound <= max)
-	{
-		min = (T)*lowerBound;
-		max = (T)*upperBound;
+	if (lowerBound != 0 && upperBound != 0) {
+		if (lowerBound < min || upperBound > max || lowerBound > upperBound) {
+			cout << "FAILED TO SET RANGE, USING DEFAULT." << endl;
+		}
+		else {
+			min = (T)lowerBound;
+			max = (T)upperBound;
+		}
 	}
 
 	T range = max - min;
@@ -57,7 +58,7 @@ void Grapher<T>::displayBarGraph(string xUnit, string yUnit, unsigned int bins, 
 		counts.push_back(count);
 		string separator = (i == bins - 1) ? " - " : " - <";
 		//TODO: display decimals to avoid something like 24 - <24
-		string label = to_string(binMin / 3600) + separator + to_string(binMax / 3600) + ": ";
+		string label = to_string(binMin) + separator + to_string(binMax) + ": ";
 		if (label.size() > maxLabelWidth) {
 			maxLabelWidth = label.size();
 		}

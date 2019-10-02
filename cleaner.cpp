@@ -105,7 +105,7 @@ int main(int argc, char** argv) {
         return 0; 
     }
     if (shouldPlot) {
-        vector<unsigned long> dataPoints;
+        vector<double> dataPoints;
         string queryString = "select startTime from job where startTime < " + to_string(oldestAllowableTime) + 
         " and status = 'R'" + ";";
         const char* query = queryString.c_str();
@@ -114,17 +114,17 @@ int main(int argc, char** argv) {
             while (s.Next()) {
                 unsigned long startTime = s.GetField(0);
                 unsigned long age_seconds = currentTime - startTime;
-                dataPoints.push_back(age_seconds);
+                dataPoints.push_back(double(age_seconds) / 3600.0);
             }
-            Grapher<unsigned long> grapher;
+            Grapher<double> grapher;
             grapher.setData(dataPoints);
-            grapher.displayBarGraph("age (hours)", "jobs", 20); //TODO: flag to set bins?
+            grapher.displayBarGraph("age (hours)", "jobs", 20, 499, 500); //TODO: flag to set bins?
 
             unsigned long min = *min_element(dataPoints.begin(), dataPoints.end());
             unsigned long max = *max_element(dataPoints.begin(), dataPoints.end());
 
-            cout << "Minimum job age: " << float(min) / 3600.0 << " hours" << endl;
-            cout << "Maximum job age: " << float(max) / 3600.0 << " hours" << endl;
+            cout << "Minimum job age: " << min << " hours" << endl;
+            cout << "Maximum job age: " << max << " hours" << endl;
             cout << endl;
         } catch (sqdb::Exception& e) {
             cout << "DATABASE ERROR" << endl;
