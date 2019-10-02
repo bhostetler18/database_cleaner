@@ -118,8 +118,14 @@ int main(int argc, char** argv) {
             }
             Grapher<unsigned long> grapher;
             grapher.setData(dataPoints);
-            cout << endl << "Number of jobs by age (hours):" << endl;
-            grapher.displayBarGraph("hours", "jobs", 20); //TODO: flag to set bins?
+            grapher.displayBarGraph("age (hours)", "jobs", 20); //TODO: flag to set bins?
+
+            unsigned long min = *min_element(dataPoints.begin(), dataPoints.end());
+            unsigned long max = *max_element(dataPoints.begin(), dataPoints.end());
+
+            cout << "Minimum job age: " << float(min) / 3600.0 << " hours" << endl;
+            cout << "Maximum job age: " << float(max) / 3600.0 << " hours" << endl;
+            cout << endl;
         } catch (sqdb::Exception& e) {
             cout << "DATABASE ERROR" << endl;
         }

@@ -9,7 +9,9 @@ template<typename T>
 class Grapher {
 public:
 	Grapher(int width = 60);
-	void displayBarGraph(string xAxisUnit, string yAxisUnit, unsigned int bins = 10);
+	void displayBarGraph(string xUnit, string yUnit, unsigned int bins = 10, 
+		unsigned int* lowerBound = nullptr, 
+		unsigned int* upperBound = nullptr) const;
 	void setData(vector<T>); //TODO: template to take any numeric type
 
 private:
@@ -28,7 +30,7 @@ void Grapher<T>::setData(vector<T> data) {
 }
 
 template<typename T>
-void Grapher<T>::displayBarGraph(string xAxisUnit, string yAxisUnit, unsigned int bins) {
+void Grapher<T>::displayBarGraph(string xUnit, string yUnit, unsigned int bins, unsigned int* lowerBound, unsigned int* upperBound) const {
 	unsigned long min = *min_element(data.begin(), data.end());
 	unsigned long max = *max_element(data.begin(), data.end());
 	unsigned long range = max - min;
@@ -63,6 +65,7 @@ void Grapher<T>::displayBarGraph(string xAxisUnit, string yAxisUnit, unsigned in
 		barHeights.push_back(normalized);
 	}
 
+	cout << endl << "Number of " + yUnit + " by " + xUnit << endl;
 	for (unsigned int bar = 0; bar < barHeights.size(); bar++) {
 		if (rangeLabels[bar].size() < maxLabelWidth) {
 			cout << string(maxLabelWidth - rangeLabels[bar].size(), ' ');
@@ -72,15 +75,9 @@ void Grapher<T>::displayBarGraph(string xAxisUnit, string yAxisUnit, unsigned in
 			cout << "█"; //TODO: use fractional bars for better accuracy?
 		}
 		if (barHeights[bar] != 0) {
-			cout << " (" << counts[bar] << " " << yAxisUnit << ")";
+			cout << " (" << counts[bar] << " " << yUnit << ")";
 		}
 		cout << endl;
 	}
-	
-	cout << endl << endl;
-	
-	//TODO move out of grapher to make more generic
-	cout << "Minimum job age: " << float(min) / 3600.0 << " hours" << endl;
-	cout << "Maximum job age: " << float(max) / 3600.0 << " hours" << endl;
 	cout << endl;
 }
