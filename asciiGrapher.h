@@ -31,18 +31,26 @@ void Grapher<T>::setData(vector<T> data) {
 
 template<typename T>
 void Grapher<T>::displayBarGraph(string xUnit, string yUnit, unsigned int bins, unsigned int* lowerBound, unsigned int* upperBound) const {
-	unsigned long min = *min_element(data.begin(), data.end());
-	unsigned long max = *max_element(data.begin(), data.end());
-	unsigned long range = max - min;
-	unsigned long binWidth = range / bins; //TODO: better division of bins?
+	T min = *min_element(data.begin(), data.end());
+	T max = *max_element(data.begin(), data.end());
+
+	if (lowerBound != nullptr && upperBound != nullptr && 
+		(T)*lowerBound >= min && (T)*upperBound <= max)
+	{
+		min = (T)*lowerBound;
+		max = (T)*upperBound;
+	}
+
+	T range = max - min;
+	T binWidth = range / bins; //TODO: better division of bins?
 	vector<int> counts;
 	vector<string> rangeLabels;
 	int maxLabelWidth = 0;
 	for (unsigned int i = 0; i < bins; i++) {
-		unsigned long binMin = min + i * binWidth;
-		unsigned long binMax = min + (i + 1) * binWidth;
+		T binMin = min + i * binWidth;
+		T binMax = min + (i + 1) * binWidth;
 		bool inclusiveMax = (i == bins - 1);
-		auto isInRange = [binMin, binMax, inclusiveMax](unsigned long val) { 
+		auto isInRange = [binMin, binMax, inclusiveMax](T val) { 
 			return val >= binMin && (val < binMax || (inclusiveMax && val <= binMax));
 		};
 		int count = count_if(data.begin(), data.end(), isInRange);
