@@ -8,6 +8,19 @@
 #include "cleaner.h"
 #include "asciiGrapher.h"
 
+//TODO: make class to better support names and conversions?
+enum TimeUnit { MINUTE = 60, HOUR = 3600, DAY = 86400, WEEK = 604800, YEAR = 31449600};
+
+string toString(TimeUnit t) {
+    switch (t) {
+        case MINUTE: return "minute"; break;
+        case HOUR: return "hour"; break;
+        case DAY: return "day"; break;
+        case WEEK: return "week"; break;
+        case YEAR: return "year"; break;
+    }
+}
+
 int getNumOldJobs(Db db, unsigned long cutoffTime)
 {
     string queryString = "select count(*) from job where startTime < " + to_string(cutoffTime) + 
@@ -57,9 +70,11 @@ int main(int argc, char** argv) {
     Db database("tmp.sqlite"); //TODO: argument for selecting database?
 
     // Defaults
-    int cutoffHours = 24;
+    int cutoffHours = 24; //TODO: rename hours
     bool resetCounters = true;
     bool shouldPlot = false;
+    TimeUnit unit = WEEK;
+    string unitLabel = toString(unit) + "s";
 
     // Handle command line flags
     if (argc > 1) {
@@ -114,23 +129,23 @@ int main(int argc, char** argv) {
             while (s.Next()) {
                 unsigned long startTime = s.GetField(0);
                 unsigned long age_seconds = currentTime - startTime;
-                dataPoints.push_back(double(age_seconds) / 3600.0);
+                dataPoints.push_back((double)age_seconds / (double)unit);
             }
             Grapher<double> grapher;
             grapher.setData(dataPoints);
-            grapher.displayBarGraph("age (hours)", "jobs", 400, 499, 499.9); //TODO: flag to set bins?
+            grapher.displayBarGraph("age (" + unitLabel + ")", "jobs", 20); //TODO: flag to set bins?
 
             double min = *min_element(dataPoints.begin(), dataPoints.end());
             double max = *max_element(dataPoints.begin(), dataPoints.end());
 
-            cout << "Minimum job age: " << min << " hours" << endl;
-            cout << "Maximum job age: " << max << " hours" << endl;
+            cout << "Minimum job age: " << min << " " << unitLabel << endl;
+            cout << "Maximum job age: " << max << " " << unitLabel << endl;
             cout << endl;
         } catch (sqdb::Exception& e) {
             cout << "DATABASE ERROR" << endl;
         }
     }
-    cout << to_string(count) + " jobs older than " << cutoffHours << " hours found." << endl;
+    cout << to_string(count) + " jobs older than " << cutoffHours << " " << unitLabel << " found." << endl;
 
     cout << "Queue these jobs? (Y/n) ";
     string response;
