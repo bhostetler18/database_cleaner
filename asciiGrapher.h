@@ -43,7 +43,7 @@ void Grapher<T>::displayBarGraph(string xUnit, string yUnit, unsigned int bins, 
 	}
 
 	T range = max - min;
-	T binWidth = range / bins; //TODO: better division of bins?
+	T binWidth = range / bins; //TODO: better division of bins, especially if T is integral
 	vector<int> counts;
 	vector<string> rangeLabels;
 	int maxLabelWidth = 0;
@@ -88,4 +88,6 @@ void Grapher<T>::displayBarGraph(string xUnit, string yUnit, unsigned int bins, 
 		cout << endl;
 	}
 	cout << endl;
+
+	//TODO: summary statistics here
 }

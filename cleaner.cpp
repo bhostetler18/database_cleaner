@@ -9,7 +9,7 @@
 #include "asciiGrapher.h"
 
 //TODO: make class to better support names and conversions?
-enum TimeUnit { MINUTE = 60, HOUR = 3600, DAY = 86400, WEEK = 604800, YEAR = 31449600};
+enum TimeUnit { MINUTE = 60, HOUR = 3600, DAY = 86400, WEEK = 604800, YEAR = 31536000};
 
 string toString(TimeUnit t) {
     switch (t) {
@@ -21,9 +21,9 @@ string toString(TimeUnit t) {
     }
 }
 
-int getNumOldJobs(Db db, unsigned long cutoffTime)
+int getNumOldJobs(Db db, unsigned long cutoffTimeSeconds)
 {
-    string queryString = "select count(*) from job where startTime < " + to_string(cutoffTime) + 
+    string queryString = "select count(*) from job where startTime < " + to_string(cutoffTimeSeconds) + 
     " and status = 'R'" + ";";
     const char* query = queryString.c_str();
     try {
@@ -31,19 +31,19 @@ int getNumOldJobs(Db db, unsigned long cutoffTime)
         s.Next();
         return s.GetField(0);
     } catch (sqdb::Exception& e) {
-        cout << "DATABASE ERROR" << endl;
+        cout << "DATABASE ERROR" << endl; //TODO: move to error output?
         return 0;
     }
 }
 
 //TODO: also set startTime?
-void queueOldJobs(Db db, bool resetAttemptCounter, unsigned long cutoffTime)
+void queueOldJobs(Db db, bool resetAttemptCounter, unsigned long cutoffTimeSeconds)
 {
-    string sqlSetStatus = "update job set status = 'Q' where startTime < " + to_string(cutoffTime) + 
+    string sqlSetStatus = "update job set status = 'Q' where startTime < " + to_string(cutoffTimeSeconds) + 
     " and status = 'R'" + ";";
     const char* updateStatus = sqlSetStatus.c_str();
 
-    string sqlSetAttempts = "update job set attempts = 0 where startTime < " + to_string(cutoffTime) + 
+    string sqlSetAttempts = "update job set attempts = 0 where startTime < " + to_string(cutoffTimeSeconds) + 
     " and status = 'R'" + ";";
     const char* updateAttemptCount = sqlSetAttempts.c_str();
 
@@ -70,11 +70,11 @@ int main(int argc, char** argv) {
     Db database("tmp.sqlite"); //TODO: argument for selecting database?
 
     // Defaults
-    int cutoffHours = 24; //TODO: rename hours
+    int cutoffTime = 24;
     bool resetCounters = true;
     bool shouldPlot = false;
     TimeUnit unit = WEEK;
-    string unitLabel = toString(unit) + "s";
+    string unitLabel = toString(unit) + "(s)";
 
     // Handle command line flags
     if (argc > 1) {
@@ -94,11 +94,11 @@ int main(int argc, char** argv) {
                 if (i + 1 >= argc) {
                     invalid = true;
                 } else {
-                    int hours = atoi(argv[i + 1]);
-                    if (hours == 0) {
+                    int time = atoi(argv[i + 1]);
+                    if (time == 0) {
                         invalid = true;
                     } else {
-                        cutoffHours = hours;
+                        cutoffTime = time;
                     }
                 }
             }
@@ -110,13 +110,13 @@ int main(int argc, char** argv) {
         }
     }
 
-    int cutoffTimeInSeconds = cutoffHours * 3600;
+    int cutoffTimeInSeconds = cutoffTime * unit;
     unsigned long currentTime = time(nullptr); //TODO: this could potentially break on non-UNIX systems 
     unsigned long oldestAllowableTime = currentTime - cutoffTimeInSeconds;
 
     int count = getNumOldJobs(database, oldestAllowableTime);
     if (count == 0) { 
-        cout << "No jobs older than " << cutoffHours << " hours." << endl;
+        cout << "No jobs older than " << cutoffTime << " " << unitLabel << endl;
         return 0; 
     }
     if (shouldPlot) {
@@ -145,7 +145,7 @@ int main(int argc, char** argv) {
             cout << "DATABASE ERROR" << endl;
         }
     }
-    cout << to_string(count) + " jobs older than " << cutoffHours << " " << unitLabel << " found." << endl;
+    cout << to_string(count) + " jobs older than " << cutoffTime << " " << unitLabel << " found." << endl;
 
     cout << "Queue these jobs? (Y/n) ";
     string response;
