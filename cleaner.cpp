@@ -133,7 +133,7 @@ int main(int argc, char** argv) {
             }
             Grapher<double> grapher;
             grapher.setData(dataPoints);
-            grapher.displayBarGraph("age (" + unitLabel + ")", "jobs", 20); //TODO: flag to set bins?
+            grapher.displayBarGraph("age (" + unitLabel + ")", "jobs", 2, 3, 3.2); //TODO: flag to set bins?
 
             double min = *min_element(dataPoints.begin(), dataPoints.end());
             double max = *max_element(dataPoints.begin(), dataPoints.end());

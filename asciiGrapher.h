@@ -38,6 +38,7 @@ void Grapher<T>::displayBarGraph(string xUnit, string yUnit, unsigned int bins, 
 		}
 		else {
 			min = (T)lowerBound;
+			cout << "setting bounds" << endl;
 			max = (T)upperBound;
 		}
 	}
