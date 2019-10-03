@@ -118,10 +118,10 @@ int main(int argc, char** argv) {
             }
             Grapher<double> grapher;
             grapher.setData(dataPoints);
-            grapher.displayBarGraph("age (hours)", "jobs", 20, 499, 500); //TODO: flag to set bins?
+            grapher.displayBarGraph("age (hours)", "jobs", 400, 499, 499.9); //TODO: flag to set bins?
 
-            unsigned long min = *min_element(dataPoints.begin(), dataPoints.end());
-            unsigned long max = *max_element(dataPoints.begin(), dataPoints.end());
+            double min = *min_element(dataPoints.begin(), dataPoints.end());
+            double max = *max_element(dataPoints.begin(), dataPoints.end());
 
             cout << "Minimum job age: " << min << " hours" << endl;
             cout << "Maximum job age: " << max << " hours" << endl;

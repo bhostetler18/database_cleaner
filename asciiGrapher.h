@@ -47,17 +47,16 @@ void Grapher<T>::displayBarGraph(string xUnit, string yUnit, unsigned int bins, 
 	vector<int> counts;
 	vector<string> rangeLabels;
 	int maxLabelWidth = 0;
+	string separator = " - ";
 	for (unsigned int i = 0; i < bins; i++) {
 		T binMin = min + i * binWidth;
 		T binMax = min + (i + 1) * binWidth;
-		bool inclusiveMax = (i == bins - 1);
-		auto isInRange = [binMin, binMax, inclusiveMax](T val) { 
-			return val >= binMin && (val < binMax || (inclusiveMax && val <= binMax));
+		bool inclusiveMin = (i == 0);
+		auto isInRange = [binMin, binMax, inclusiveMin](T val) { 
+			return val <= binMax && (val > binMin || (inclusiveMin && val >= binMin));
 		};
 		int count = count_if(data.begin(), data.end(), isInRange);
 		counts.push_back(count);
-		string separator = (i == bins - 1) ? " - " : " - <";
-		//TODO: display decimals to avoid something like 24 - <24
 		string label = to_string(binMin) + separator + to_string(binMax) + ": ";
 		if (label.size() > maxLabelWidth) {
 			maxLabelWidth = label.size();
