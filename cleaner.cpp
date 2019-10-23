@@ -7,6 +7,7 @@
 #include <fstream>
 #include "cleaner.h"
 #include "asciiGrapher.h"
+#include "sqliteTools.h"
 
 //TODO: make class to better support names and conversions?
 enum TimeUnit { MINUTE = 60, HOUR = 3600, DAY = 86400, WEEK = 604800, YEAR = 31536000};
@@ -69,12 +70,16 @@ int main(int argc, char** argv) {
 
     Db database("tmp.sqlite"); //TODO: argument for selecting database?
 
+    //getColumns(database, "job");
+
+
+
     // Defaults
     int cutoffTime = 24;
     bool resetCounters = true;
     bool shouldPlot = false;
-    TimeUnit unit = WEEK;
-    string unitLabel = toString(unit) + "(s)";
+    TimeUnit unit = DAY;
+    string unitLabel = toString(unit) + "s";
 
     // Handle command line flags
     if (argc > 1) {
@@ -133,7 +138,7 @@ int main(int argc, char** argv) {
             }
             Grapher<double> grapher;
             grapher.setData(dataPoints);
-            grapher.displayBarGraph("age (" + unitLabel + ")", "jobs", 2, 3, 3.2); //TODO: flag to set bins?
+            grapher.displayBarGraph("age (" + unitLabel + ")", "jobs", 10); //TODO: flag to set bins?
 
             double min = *min_element(dataPoints.begin(), dataPoints.end());
             double max = *max_element(dataPoints.begin(), dataPoints.end());

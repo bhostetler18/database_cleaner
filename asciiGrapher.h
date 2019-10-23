@@ -2,6 +2,8 @@
 #include <string>
 #include <algorithm>
 #include <iostream>
+#include <sstream>
+#include <iomanip>
 
 using namespace std;
 
@@ -34,31 +36,39 @@ void Grapher<T>::displayBarGraph(string xUnit, string yUnit, unsigned int bins, 
 
 	if (lowerBound != 0 && upperBound != 0) {
 		if (lowerBound < min || upperBound > max || lowerBound > upperBound) {
-			cout << "FAILED TO SET RANGE, USING DEFAULT." << endl;
+			cout << "FAILED TO SET RANGE, USING DEFAULT." << endl; //TODO: use cerr?
 		}
 		else {
 			min = (T)lowerBound;
-			cout << "setting bounds" << endl;
 			max = (T)upperBound;
 		}
 	}
 
 	T range = max - min;
-	T binWidth = range / bins; //TODO: better division of bins, especially if T is integral
+	double binWidth = (double)range / (double)bins; //TODO: better division of bins, especially if T is integral
 	vector<int> counts;
 	vector<string> rangeLabels;
 	int maxLabelWidth = 0;
 	string separator = " - ";
 	for (unsigned int i = 0; i < bins; i++) {
-		T binMin = min + i * binWidth;
-		T binMax = min + (i + 1) * binWidth;
+		double binMin = min + i * binWidth;
+		double binMax = min + (i + 1) * binWidth;
 		bool inclusiveMin = (i == 0);
 		auto isInRange = [binMin, binMax, inclusiveMin](T val) { 
-			return val <= binMax && (val > binMin || (inclusiveMin && val >= binMin));
+			double decimalVal = (double)val;
+			return decimalVal <= binMax && (decimalVal > binMin || (inclusiveMin && decimalVal >= binMin));
 		};
 		int count = count_if(data.begin(), data.end(), isInRange);
 		counts.push_back(count);
-		string label = to_string(binMin) + separator + to_string(binMax) + ": ";
+		stringstream ss;
+		ss.precision(2);
+		ss << fixed;
+		ss << binMin;
+		string labelMin = ss.str();
+		ss.str("");
+		ss << binMax;
+		string labelMax = ss.str();
+		string label = labelMin + separator + labelMax + ": ";
 		if (label.size() > maxLabelWidth) {
 			maxLabelWidth = label.size();
 		}
